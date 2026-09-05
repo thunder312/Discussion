@@ -9,12 +9,13 @@ The AI connection is fully configurable: point it at a local [Ollama](https://ol
 
 ## Table of contents
 
-- [B. User guide](#b-user-guide)
-- [A. Technical overview](#a-technical-overview)
-- [C. Known issues / ToDo](#c-known-issues--todo)
+- [A. User guide](#a-user-guide)
+- [B. Technical overview](#b-technical-overview)
+- [C. Testing tool: PersonaTraitTest](#c-testing-tool-personatraittest)
+- [D. Known issues / ToDo](#d-known-issues--todo)
 - [Installation](#installation)
 
-## B. User guide
+## A. User guide
 
 ### What it does
 
@@ -50,7 +51,7 @@ Sandra opens arguing that sugary snacks should be banned for public-health reaso
 
 Since a fresh install ships with no AI endpoint configured, the first thing to do is set one up in the Configuration tab.
 
-## A. Technical overview
+## B. Technical overview
 
 ### Tech stack
 
@@ -80,6 +81,8 @@ Discussion/
 │                     (chat-bubble alignment/color, round-separator template)
 ├── MainWindow.xaml(.cs)   Single window, two tabs: Configuration and Discussion
 └── App.xaml(.cs)
+Tools/
+└── PersonaTraitTest/   Standalone WPF tool to measure how persona traits affect answers - see section C
 installer/
 ├── Product.wxs      WiX v5 source for the MSI installer
 └── publish/         dotnet publish output (not committed; see Installation)
@@ -101,7 +104,18 @@ docs/screenshots/    Screenshots used in this README
 - **Model discovery** ("Search models" button, also run automatically on startup if an endpoint is already configured) calls `GET {origin}/api/tags` (Ollama) or `GET {origin}/v1/models` (OpenAI-compatible) and fills the model dropdowns for all three roles.
 - Every request uses a per-call timeout (`TimeoutSekunden`, default 300s) via a linked `CancellationTokenSource`.
 
-## C. Known issues / ToDo
+## C. Testing tool: PersonaTraitTest
+
+`Tools/PersonaTraitTest` is a small, standalone WPF tool (separate `.exe`, independent of the main app window) that measures whether - and how - the persona profile fields actually influence a model's answer. It reuses the main app's configured AI connection (`%AppData%\Discussion\config.json`) and Persona A's model.
+
+- **Run it**: `dotnet run --project Tools/PersonaTraitTest` (or launch the built `PersonaTraitTest.exe` directly).
+- **GUI**: an editable grid (min / normal / max per trait - Alter, Geschlecht, Bildungsstand, Politische Ausrichtung, Weitere Merkmale) plus an editable test question, a Start/Stop button, and a live log of every answer as it comes in.
+- **Method**: for each trait, it runs 3 calls - *normal* (every trait at its normal value), *min* (only this trait at its minimum, everything else normal), *max* (only this trait at its maximum) - always resetting to the full-normal baseline before moving to the next trait, and asking a single freestanding persona (no opponent, no forced stance) the same question each time.
+- **Output**: a timestamped JSON file under `Tools/PersonaTraitTest/Ergebnisse/` with every profile/answer/timing combination.
+
+An example run and full write-up (methodology, all 15 answers, an assessment of which traits measurably affect tone/content, and suggested per-trait "influence weight" ranges) is in [`Tools/PersonaTraitTest/Ergebnisse/Persona-Merkmal-Test-Report.pdf`](../Tools/PersonaTraitTest/Ergebnisse/Persona-Merkmal-Test-Report.pdf).
+
+## D. Known issues / ToDo
 
 - **The referee call can still hit the configured timeout**, especially on slower/local models or right after a long multi-round discussion has already kept the endpoint busy. A longer/separate timeout (or a retry) for the referee call specifically would help.
 - Persona templates can be saved and loaded, but not deleted from the UI (the JSON files can be removed manually from the configured/standard folder).

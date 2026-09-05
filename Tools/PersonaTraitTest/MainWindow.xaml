@@ -1,0 +1,59 @@
+<Window x:Class="PersonaTraitTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Persona-Merkmal-Test" Height="680" Width="900" MinHeight="500" MinWidth="700">
+
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="{Binding VerbindungsInfo}" Margin="0,0,0,10" FontStyle="Italic" TextWrapping="Wrap"/>
+
+        <StackPanel Grid.Row="1" Margin="0,0,0,10">
+            <TextBlock Text="Frage (&quot;Zuckerfrage&quot;):" FontWeight="Bold" Margin="0,0,0,2"/>
+            <TextBox Text="{Binding Frage, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Margin="0,0,0,10">
+            <TextBlock Text="Test-Parameter (je Merkmal: min / normal / max)" FontWeight="Bold" Margin="0,0,0,4"/>
+            <DataGrid ItemsSource="{Binding Zeilen}" AutoGenerateColumns="False" CanUserAddRows="False"
+                      CanUserDeleteRows="False" HeadersVisibility="Column" Height="170">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Merkmal" Binding="{Binding Merkmal}" IsReadOnly="True" Width="180"/>
+                    <DataGridTextColumn Header="min" Binding="{Binding Min}" Width="*"/>
+                    <DataGridTextColumn Header="normal" Binding="{Binding Normal}" Width="*"/>
+                    <DataGridTextColumn Header="max" Binding="{Binding Max}" Width="*"/>
+                </DataGrid.Columns>
+            </DataGrid>
+        </StackPanel>
+
+        <Grid Grid.Row="3" Margin="0,0,0,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" x:Name="StartButton" Content="Start" Padding="18,4" Margin="0,0,8,0" Click="Start_Click"/>
+            <Button Grid.Column="1" x:Name="StoppButton" Content="Stopp" Padding="18,4" Click="Stopp_Click" IsEnabled="False"/>
+            <TextBlock Grid.Column="2" Text="{Binding Status}" VerticalAlignment="Center" Margin="12,0,0,0"
+                       FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
+        </Grid>
+
+        <Border Grid.Row="4" BorderBrush="#CCCCCC" BorderThickness="1">
+            <ScrollViewer x:Name="LogScroll" VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding LogZeilen}" Margin="6">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" TextWrapping="Wrap" Margin="0,2" FontFamily="Consolas" FontSize="11"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
