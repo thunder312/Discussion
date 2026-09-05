@@ -9,5 +9,5 @@ public class KiVerbindung
     public string ModellB { get; set; } = "hf.co/mayflowergmbh/Llama-3-SauerkrautLM-8b-Instruct-GGUF:Q4_K_M";
     public string ModellSchiedsrichter { get; set; } = "mistral-small3.2:latest";
     public double Temperature { get; set; } = 0.8;
-    public int TimeoutSekunden { get; set; } = 120;
+    public int TimeoutSekunden { get; set; } = 300;
 }

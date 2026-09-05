@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
+using System.Windows.Threading;
 using Discussion.Models;
 using Discussion.Services;
 
@@ -11,10 +12,12 @@ public class MainViewModel : INotifyPropertyChanged
 {
     private readonly IKiClient _client = new KiClient();
     private CancellationTokenSource? _cts;
+    private readonly DispatcherTimer _liveTimer;
 
     public AppSettings Settings { get; }
     public ObservableCollection<ChatEintrag> Verlauf { get; } = new();
     public ObservableCollection<string> GefundeneModelle { get; } = new();
+    public ObservableCollection<string> PersonaVorlagen { get; } = new();
 
     public Array ApiFormatWerte { get; } = Enum.GetValues(typeof(ApiFormat));
 
@@ -70,7 +73,16 @@ public class MainViewModel : INotifyPropertyChanged
         private set { _etaAnzeige = value; OnPropertyChanged(); }
     }
 
+    private string _verstricheneZeitAnzeige = "–";
+    public string VerstricheneZeitAnzeige
+    {
+        get => _verstricheneZeitAnzeige;
+        private set { _verstricheneZeitAnzeige = value; OnPropertyChanged(); }
+    }
+
     private DateTime _startZeit;
+    private DateTime _rundenStartZeit;
+    private double? _durchschnittSekundenProRunde;
 
     private bool _laeuft;
     public bool Laeuft
@@ -97,11 +109,21 @@ public class MainViewModel : INotifyPropertyChanged
     public RelayCommand SpeichernCommand { get; }
     public RelayCommand TestVerbindungCommand { get; }
     public RelayCommand LlmSuchenCommand { get; }
+    public RelayCommand VorlageSpeichernCommand { get; }
+    public RelayCommand VorlageLadenCommand { get; }
+    public RelayCommand PersonaOrdnerWaehlenCommand { get; }
+    public RelayCommand LogOrdnerWaehlenCommand { get; }
+
+    private string EffektiverPersonaOrdner =>
+        string.IsNullOrWhiteSpace(Settings.Pfade.PersonaVorlagenOrdner)
+            ? PersonaVorlagenService.StandardOrdner
+            : Settings.Pfade.PersonaVorlagenOrdner;
 
     public MainViewModel()
     {
         Settings = ConfigService.Laden();
         _positionPersonaA = Settings.PositionPersonaA;
+
         StartCommand = new RelayCommand(StartenAsync, () => !Laeuft);
         StopCommand = new RelayCommand(Stoppen, () => Laeuft);
         SpeichernCommand = new RelayCommand(() =>
@@ -110,7 +132,23 @@ public class MainViewModel : INotifyPropertyChanged
             Status = "Konfiguration gespeichert.";
         });
         TestVerbindungCommand = new RelayCommand(TestVerbindungAsync);
-        LlmSuchenCommand = new RelayCommand(LlmSuchenAsync);
+        LlmSuchenCommand = new RelayCommand(LlmSuchenButtonAsync);
+        VorlageSpeichernCommand = new RelayCommand(param => VorlageSpeichern(param as PersonaProfil));
+        VorlageLadenCommand = new RelayCommand(param => VorlageLaden(param as object[]));
+        PersonaOrdnerWaehlenCommand = new RelayCommand(() => OrdnerWaehlen(
+            Settings.Pfade.PersonaVorlagenOrdner, PersonaVorlagenService.StandardOrdner,
+            pfad => { Settings.Pfade.PersonaVorlagenOrdner = pfad; AktualisierePersonaVorlagen(); }));
+        LogOrdnerWaehlenCommand = new RelayCommand(() => OrdnerWaehlen(
+            Settings.Pfade.LogOrdner, DiskussionsLogger.StandardOrdner,
+            pfad => Settings.Pfade.LogOrdner = pfad));
+
+        _liveTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(1) };
+        _liveTimer.Tick += (_, _) => AktualisiereLiveAnzeige();
+
+        AktualisierePersonaVorlagen();
+
+        if (!string.IsNullOrWhiteSpace(Settings.Verbindung.BasisUrl))
+            _ = LlmSuchenAsync(zeigeFehlerDialog: false);
     }
 
     private async Task StartenAsync()
@@ -121,12 +159,16 @@ public class MainViewModel : INotifyPropertyChanged
         AktuelleRunde = 0;
         GesamtRunden = Settings.MaxTexteJePersona;
         EtaAnzeige = "wird berechnet...";
+        VerstricheneZeitAnzeige = "0 s";
+        _durchschnittSekundenProRunde = null;
         _startZeit = DateTime.Now;
+        _rundenStartZeit = _startZeit;
         _cts = new CancellationTokenSource();
+        _liveTimer.Start();
         DiskussionsLogger? logger = null;
         try
         {
-            logger = new DiskussionsLogger(Settings.Thema);
+            logger = new DiskussionsLogger(Settings);
             Status = $"Läuft... (Log: {logger.Dateipfad})";
 
             var engine = new DiskussionsEngine(_client);
@@ -152,6 +194,7 @@ public class MainViewModel : INotifyPropertyChanged
         }
         finally
         {
+            _liveTimer.Stop();
             logger?.Dispose();
             Laeuft = false;
             _cts = null;
@@ -160,20 +203,33 @@ public class MainViewModel : INotifyPropertyChanged
 
     private void AktualisiereFortschritt(int aktuelleRunde, int gesamtRunden)
     {
+        var jetzt = DateTime.Now;
+        int abgeschlosseneRunden = aktuelleRunde - 1;
+        _durchschnittSekundenProRunde = abgeschlosseneRunden > 0
+            ? (jetzt - _startZeit).TotalSeconds / abgeschlosseneRunden
+            : null;
+        _rundenStartZeit = jetzt;
+
         AktuelleRunde = aktuelleRunde;
         GesamtRunden = gesamtRunden;
+        AktualisiereLiveAnzeige();
+    }
 
-        int abgeschlosseneRunden = aktuelleRunde - 1;
-        if (abgeschlosseneRunden <= 0)
+    private void AktualisiereLiveAnzeige()
+    {
+        var jetzt = DateTime.Now;
+        VerstricheneZeitAnzeige = FormatiereDauer((jetzt - _startZeit).TotalSeconds);
+
+        if (_durchschnittSekundenProRunde is not double durchschnitt)
         {
             EtaAnzeige = "wird berechnet...";
             return;
         }
 
-        double elapsedSekunden = (DateTime.Now - _startZeit).TotalSeconds;
-        double sekundenProRunde = elapsedSekunden / abgeschlosseneRunden;
-        int restRunden = gesamtRunden - abgeschlosseneRunden;
-        EtaAnzeige = FormatiereDauer(sekundenProRunde * restRunden);
+        double zeitInAktuellerRunde = (jetzt - _rundenStartZeit).TotalSeconds;
+        double restAktuelleRunde = Math.Max(0, durchschnitt - zeitInAktuellerRunde);
+        int restRundenDanach = Math.Max(0, GesamtRunden - AktuelleRunde);
+        EtaAnzeige = FormatiereDauer(restAktuelleRunde + restRundenDanach * durchschnitt);
     }
 
     private static string FormatiereDauer(double sekunden)
@@ -214,7 +270,9 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    private async Task LlmSuchenAsync()
+    private Task LlmSuchenButtonAsync() => LlmSuchenAsync(zeigeFehlerDialog: true);
+
+    private async Task LlmSuchenAsync(bool zeigeFehlerDialog)
     {
         Status = "Suche verfügbare Modelle...";
         try
@@ -230,8 +288,72 @@ public class MainViewModel : INotifyPropertyChanged
         catch (KiVerbindungsFehler ex)
         {
             Status = "Modellsuche fehlgeschlagen.";
-            MessageBox.Show(ex.Message, "Modellsuche fehlgeschlagen", MessageBoxButton.OK, MessageBoxImage.Error);
+            if (zeigeFehlerDialog)
+                MessageBox.Show(ex.Message, "Modellsuche fehlgeschlagen", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+    }
+
+    private void VorlageSpeichern(PersonaProfil? profil)
+    {
+        if (profil is null)
+            return;
+        if (string.IsNullOrWhiteSpace(profil.Name))
+        {
+            MessageBox.Show("Bitte zuerst im Feld 'Name' einen Namen vergeben, unter dem die Vorlage gespeichert werden soll.",
+                "Name fehlt", MessageBoxButton.OK, MessageBoxImage.Warning);
+            return;
+        }
+
+        PersonaVorlagenService.Speichern(profil, EffektiverPersonaOrdner);
+        AktualisierePersonaVorlagen();
+        Status = $"Vorlage '{profil.Name}' gespeichert.";
+    }
+
+    private void VorlageLaden(object[]? werte)
+    {
+        if (werte is null || werte.Length < 2 || werte[0] is not PersonaProfil ziel)
+            return;
+
+        if (werte[1] is not string vorlageName || string.IsNullOrWhiteSpace(vorlageName))
+        {
+            Status = "Bitte zuerst eine Vorlage auswählen.";
+            return;
+        }
+
+        try
+        {
+            var geladen = PersonaVorlagenService.Laden(vorlageName, EffektiverPersonaOrdner);
+            ziel.Name = geladen.Name;
+            ziel.Alter = geladen.Alter;
+            ziel.Geschlecht = geladen.Geschlecht;
+            ziel.Bildungsstand = geladen.Bildungsstand;
+            ziel.PolitischeAusrichtung = geladen.PolitischeAusrichtung;
+            ziel.Zusatz = geladen.Zusatz;
+            Status = $"Vorlage '{vorlageName}' geladen.";
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Vorlage konnte nicht geladen werden: {ex.Message}", "Fehler",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private void AktualisierePersonaVorlagen()
+    {
+        PersonaVorlagen.Clear();
+        foreach (var name in PersonaVorlagenService.Auflisten(EffektiverPersonaOrdner))
+            PersonaVorlagen.Add(name);
+    }
+
+    private static void OrdnerWaehlen(string aktuell, string standard, Action<string> setzen)
+    {
+        var dialog = new Microsoft.Win32.OpenFolderDialog
+        {
+            InitialDirectory = string.IsNullOrWhiteSpace(aktuell) ? standard : aktuell,
+            Title = "Ordner auswählen"
+        };
+        if (dialog.ShowDialog() == true)
+            setzen(dialog.FolderName);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

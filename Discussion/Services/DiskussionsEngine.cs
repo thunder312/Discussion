@@ -57,10 +57,19 @@ public class DiskussionsEngine
             transkript.Add($"{nameB}: {textB}");
 
             letzterTextB = textB;
+
+            var trenner = new ChatEintrag(DateTime.Now, Sprecher.Trenner, "", $"--- Ende Runde {runde} ---");
+            logger.Schreiben(trenner);
+            NeuerEintrag?.Invoke(trenner);
         }
 
         if (settings.SchiedsrichterAktiv)
         {
+            var hinweis = new ChatEintrag(DateTime.Now, Sprecher.Trenner, "",
+                "--- Diskussion beendet - Schiedsrichter bewertet die Argumente... ---");
+            logger.Schreiben(hinweis);
+            NeuerEintrag?.Invoke(hinweis);
+
             var eintragSchiedsrichter = await BewerteAsync(settings, transkript, nameA, nameB, ct);
             logger.Schreiben(eintragSchiedsrichter);
             NeuerEintrag?.Invoke(eintragSchiedsrichter);

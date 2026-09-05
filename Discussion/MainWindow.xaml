@@ -13,6 +13,7 @@
     <Window.Resources>
         <conv:SprecherZuAusrichtungConverter x:Key="SprecherZuAusrichtungConverter"/>
         <conv:SprecherZuFarbeConverter x:Key="SprecherZuFarbeConverter"/>
+        <conv:ArrayMultiConverter x:Key="ArrayMultiConverter"/>
 
         <Style TargetType="GroupBox">
             <Setter Property="Margin" Value="0,0,0,12"/>
@@ -33,42 +34,65 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name (optional):" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Vorlage:" Style="{StaticResource Label}"/>
+                <Grid Grid.Row="0" Grid.Column="1" Margin="0,0,0,6">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox x:Name="VorlageAuswahl" Grid.Column="0" Margin="0,0,8,0"
+                              ItemsSource="{Binding DataContext.PersonaVorlagen, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                    <Button Grid.Column="1" Content="Laden" Padding="8,2" Margin="0,0,8,0"
+                            Command="{Binding DataContext.VorlageLadenCommand, RelativeSource={RelativeSource AncestorType=Window}}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource ArrayMultiConverter}">
+                                <Binding Path="."/>
+                                <Binding ElementName="VorlageAuswahl" Path="SelectedItem"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                    <Button Grid.Column="2" Content="Speichern als Vorlage" Padding="8,2"
+                            Command="{Binding DataContext.VorlageSpeichernCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            CommandParameter="{Binding}"/>
+                </Grid>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Name (optional):" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
                          Text="{Binding Name}"/>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Alter:" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Alter:" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
                          Text="{Binding Alter}"/>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Geschlecht:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Geschlecht:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.GeschlechtOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding Geschlecht, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Bildungsstand:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Bildungsstand:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.BildungsstandOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding Bildungsstand, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Politische Ausrichtung:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Politische Ausrichtung:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.PolitischeAusrichtungOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding PolitischeAusrichtung, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Grid.Row="5" Grid.Column="0" Text="Weitere Merkmale (optional):" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Weitere Merkmale (optional):" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource Feld}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
                          Text="{Binding Zusatz}"/>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate DataType="{x:Type models:ChatEintrag}">
+        <DataTemplate x:Key="NachrichtTemplate">
             <Border Background="{Binding Sprecher, Converter={StaticResource SprecherZuFarbeConverter}}"
                     HorizontalAlignment="{Binding Sprecher, Converter={StaticResource SprecherZuAusrichtungConverter}}"
                     CornerRadius="6" Padding="10,6" Margin="4" MaxWidth="680">
@@ -81,6 +105,15 @@
                 </StackPanel>
             </Border>
         </DataTemplate>
+
+        <DataTemplate x:Key="TrennerTemplate">
+            <TextBlock Text="{Binding Text}" HorizontalAlignment="Center" Foreground="Gray" FontStyle="Italic"
+                       FontSize="11" Margin="4,10"/>
+        </DataTemplate>
+
+        <conv:ChatEintragTemplateSelector x:Key="ChatEintragTemplateSelector"
+                                           NachrichtTemplate="{StaticResource NachrichtTemplate}"
+                                           TrennerTemplate="{StaticResource TrennerTemplate}"/>
     </Window.Resources>
 
     <Grid Margin="10">
@@ -152,6 +185,42 @@
                             </Grid>
                         </GroupBox>
 
+                        <GroupBox Header="Pfade">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/><RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="Ordner Persona-Vorlagen:" Style="{StaticResource Label}"/>
+                                <Grid Grid.Row="0" Grid.Column="1" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Margin="0,0,8,0" ToolTip="Leer lassen für Standardordner"
+                                             Text="{Binding Settings.Pfade.PersonaVorlagenOrdner}"/>
+                                    <Button Grid.Column="1" Content="Durchsuchen..." Padding="8,2"
+                                            Command="{Binding PersonaOrdnerWaehlenCommand}"/>
+                                </Grid>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Ordner Gesprächs-Protokolle:" Style="{StaticResource Label}"/>
+                                <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Margin="0,0,8,0" ToolTip="Leer lassen für Standardordner"
+                                             Text="{Binding Settings.Pfade.LogOrdner}"/>
+                                    <Button Grid.Column="1" Content="Durchsuchen..." Padding="8,2"
+                                            Command="{Binding LogOrdnerWaehlenCommand}"/>
+                                </Grid>
+                            </Grid>
+                        </GroupBox>
+
                         <GroupBox Header="Persona A">
                             <ContentControl Content="{Binding Settings.PersonaA}" ContentTemplate="{StaticResource PersonaEditor}"/>
                         </GroupBox>
@@ -182,12 +251,16 @@
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Column="0" Text="Aktuelle Runde:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
                                 <TextBlock Grid.Column="1" Text="{Binding RundenAnzeige}" VerticalAlignment="Center" Margin="0,0,24,0"/>
-                                <TextBlock Grid.Column="2" Text="Verbleibende Zeit (ETA):" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                                <TextBlock Grid.Column="3" Text="{Binding EtaAnzeige}" VerticalAlignment="Center"/>
+                                <TextBlock Grid.Column="2" Text="Verstrichene Zeit:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Grid.Column="3" Text="{Binding VerstricheneZeitAnzeige}" VerticalAlignment="Center" Margin="0,0,24,0"/>
+                                <TextBlock Grid.Column="4" Text="Verbleibende Zeit (ETA):" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Grid.Column="5" Text="{Binding EtaAnzeige}" VerticalAlignment="Center"/>
                             </Grid>
                         </Border>
 
@@ -239,7 +312,8 @@
 
                     <Border Grid.Row="1" BorderBrush="#CCCCCC" BorderThickness="1">
                         <ScrollViewer x:Name="VerlaufScroll" VerticalScrollBarVisibility="Auto">
-                            <ItemsControl ItemsSource="{Binding Verlauf}" Margin="6"/>
+                            <ItemsControl ItemsSource="{Binding Verlauf}" Margin="6"
+                                          ItemTemplateSelector="{StaticResource ChatEintragTemplateSelector}"/>
                         </ScrollViewer>
                     </Border>
                 </Grid>

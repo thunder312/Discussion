@@ -6,6 +6,8 @@ public class RelayCommand : ICommand
 {
     private readonly Func<Task>? _executeAsync;
     private readonly Action? _execute;
+    private readonly Action<object?>? _executeParam;
+    private readonly Func<object?, Task>? _executeParamAsync;
     private readonly Func<bool>? _canExecute;
 
     public RelayCommand(Action execute, Func<bool>? canExecute = null)
@@ -20,6 +22,18 @@ public class RelayCommand : ICommand
         _canExecute = canExecute;
     }
 
+    public RelayCommand(Action<object?> executeParam, Func<bool>? canExecute = null)
+    {
+        _executeParam = executeParam;
+        _canExecute = canExecute;
+    }
+
+    public RelayCommand(Func<object?, Task> executeParamAsync, Func<bool>? canExecute = null)
+    {
+        _executeParamAsync = executeParamAsync;
+        _canExecute = canExecute;
+    }
+
     public event EventHandler? CanExecuteChanged;
 
     public bool CanExecute(object? parameter) => _canExecute?.Invoke() ?? true;
@@ -28,6 +42,10 @@ public class RelayCommand : ICommand
     {
         if (_executeAsync != null)
             await _executeAsync();
+        else if (_executeParamAsync != null)
+            await _executeParamAsync(parameter);
+        else if (_executeParam != null)
+            _executeParam(parameter);
         else
             _execute?.Invoke();
     }

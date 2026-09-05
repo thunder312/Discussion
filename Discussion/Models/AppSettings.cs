@@ -9,12 +9,14 @@ public class AppSettings
     public int MaxTexteJePersona { get; set; } = 5;
     public Position PositionPersonaA { get; set; } = Position.Pro;
     public bool SchiedsrichterAktiv { get; set; } = true;
+    public Pfade Pfade { get; set; } = new();
 
     public static AppSettings Standard() => new()
     {
         Verbindung = new KiVerbindung(),
         PositionPersonaA = Position.Pro,
         SchiedsrichterAktiv = true,
+        Pfade = new Pfade(),
         PersonaA = new PersonaProfil
         {
             Name = "",

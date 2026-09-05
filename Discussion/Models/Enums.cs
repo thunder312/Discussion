@@ -11,6 +11,7 @@ public enum Sprecher
     PersonaA,
     PersonaB,
     Schiedsrichter,
+    Trenner,
     System
 }
 
