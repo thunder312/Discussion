@@ -4,8 +4,8 @@ A Windows desktop app that pits two independent AI personas against each other i
 
 The AI connection is fully configurable: point it at a local [Ollama](https://ollama.com) instance, a remote one, or any OpenAI-compatible chat-completion endpoint.
 
-![Configuration tab](docs/screenshots/configuration.png)
-![Discussion tab](docs/screenshots/discussion.png)
+![Configuration tab](../docs/screenshots/configuration.png)
+![Discussion tab](../docs/screenshots/discussion.png)
 
 ## Table of contents
 
