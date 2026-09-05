@@ -112,7 +112,7 @@ public class MainViewModel : INotifyPropertyChanged
         }
         catch (KiVerbindungsFehler ex)
         {
-            var fehlerEintrag = new ChatEintrag(DateTime.Now, Sprecher.System, ex.Message);
+            var fehlerEintrag = new ChatEintrag(DateTime.Now, Sprecher.System, "System", ex.Message);
             Verlauf.Add(fehlerEintrag);
             logger?.Schreiben(fehlerEintrag);
             Status = "Fehler - siehe Verlauf.";

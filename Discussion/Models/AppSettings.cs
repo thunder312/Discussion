@@ -8,13 +8,16 @@ public class AppSettings
     public string Thema { get; set; } = "";
     public int MaxTexteJePersona { get; set; } = 10;
     public Position PositionPersonaA { get; set; } = Position.Pro;
+    public bool SchiedsrichterAktiv { get; set; } = true;
 
     public static AppSettings Standard() => new()
     {
         Verbindung = new KiVerbindung(),
         PositionPersonaA = Position.Pro,
+        SchiedsrichterAktiv = true,
         PersonaA = new PersonaProfil
         {
+            Name = "",
             Alter = "34",
             Geschlecht = "weiblich",
             Bildungsstand = "Studium/Akademiker",
@@ -23,6 +26,7 @@ public class AppSettings
         },
         PersonaB = new PersonaProfil
         {
+            Name = "",
             Alter = "52",
             Geschlecht = "männlich",
             Bildungsstand = "Realschulabschluss",

@@ -33,33 +33,37 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
-                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
                 </Grid.RowDefinitions>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Text="Alter:" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name (optional):" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
+                         Text="{Binding Name}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Alter:" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
                          Text="{Binding Alter}"/>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Text="Geschlecht:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Geschlecht:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.GeschlechtOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding Geschlecht, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Text="Bildungsstand:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Bildungsstand:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.BildungsstandOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding Bildungsstand, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Text="Politische Ausrichtung:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Politische Ausrichtung:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.PolitischeAusrichtungOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding PolitischeAusrichtung, UpdateSourceTrigger=PropertyChanged}"/>
 
-                <TextBlock Grid.Row="4" Grid.Column="0" Text="Weitere Merkmale (optional):" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Weitere Merkmale (optional):" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
                          Text="{Binding Zusatz}"/>
             </Grid>
         </DataTemplate>
@@ -70,7 +74,7 @@
                     CornerRadius="6" Padding="10,6" Margin="4" MaxWidth="680">
                 <StackPanel>
                     <DockPanel LastChildFill="False">
-                        <TextBlock Text="{Binding SprecherName}" FontWeight="Bold" FontSize="11" Opacity="0.7" DockPanel.Dock="Left"/>
+                        <TextBlock Text="{Binding AnzeigeName}" FontWeight="Bold" FontSize="11" Opacity="0.7" DockPanel.Dock="Left"/>
                         <TextBlock Text="{Binding ZeitAnzeige}" FontSize="10" Opacity="0.5" DockPanel.Dock="Right"/>
                     </DockPanel>
                     <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,4,0,0"/>
@@ -93,7 +97,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition/><RowDefinition/><RowDefinition/>
-                                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="API-Format:" Style="{StaticResource Label}"/>
@@ -129,12 +133,18 @@
                                           ItemsSource="{Binding GefundeneModelle}"
                                           Text="{Binding Settings.Verbindung.ModellB, UpdateSourceTrigger=PropertyChanged}"/>
 
-                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Temperature:" Style="{StaticResource Label}"/>
-                                <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Modell Schiedsrichter:" Style="{StaticResource Label}"/>
+                                <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}"
+                                          IsEditable="True"
+                                          ItemsSource="{Binding GefundeneModelle}"
+                                          Text="{Binding Settings.Verbindung.ModellSchiedsrichter, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Temperature:" Style="{StaticResource Label}"/>
+                                <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
                                          Text="{Binding Settings.Verbindung.Temperature}"/>
 
-                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Timeout (Sekunden):" Style="{StaticResource Label}"/>
-                                <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
+                                <TextBlock Grid.Row="7" Grid.Column="0" Text="Timeout (Sekunden):" Style="{StaticResource Label}"/>
+                                <StackPanel Grid.Row="7" Grid.Column="1" Orientation="Horizontal">
                                     <TextBox Width="100" HorizontalAlignment="Left" Margin="0,0,12,6"
                                              Text="{Binding Settings.Verbindung.TimeoutSekunden}"/>
                                     <Button Content="Verbindung testen" Padding="10,2" Command="{Binding TestVerbindungCommand}"/>
@@ -185,6 +195,9 @@
                             <TextBlock Grid.Column="3" Text="{Binding PositionPersonaBAnzeige}"
                                        VerticalAlignment="Center" FontWeight="Bold"/>
                         </Grid>
+
+                        <CheckBox Content="Schiedsrichter aktivieren (bewertet die Diskussion am Ende und kürt einen Sieger)"
+                                  IsChecked="{Binding Settings.SchiedsrichterAktiv}" Margin="0,0,0,8"/>
 
                         <Grid>
                             <Grid.ColumnDefinitions>

@@ -17,9 +17,12 @@ public class DiskussionsEngine
     {
         var positionA = settings.PositionPersonaA;
         var positionB = positionA.Gegenteil();
+        string nameA = AnzeigeName(settings.PersonaA, "Persona A");
+        string nameB = AnzeigeName(settings.PersonaB, "Persona B");
 
         var verlaufA = new List<ChatMessage> { new("system", BaueSystemPrompt(settings.PersonaA, settings.PersonaB, settings.Thema, positionA)) };
         var verlaufB = new List<ChatMessage> { new("system", BaueSystemPrompt(settings.PersonaB, settings.PersonaA, settings.Thema, positionB)) };
+        var transkript = new List<string>();
 
         string? letzterTextB = null;
 
@@ -33,9 +36,10 @@ public class DiskussionsEngine
             verlaufA.Add(new ChatMessage("user", eingabeA));
             string textA = await _client.SendeAsync(settings.Verbindung, settings.Verbindung.ModellA, verlaufA, ct);
             verlaufA.Add(new ChatMessage("assistant", textA));
-            var eintragA = new ChatEintrag(DateTime.Now, Sprecher.PersonaA, textA);
+            var eintragA = new ChatEintrag(DateTime.Now, Sprecher.PersonaA, nameA, textA);
             logger.Schreiben(eintragA);
             NeuerEintrag?.Invoke(eintragA);
+            transkript.Add($"{nameA}: {textA}");
 
             ct.ThrowIfCancellationRequested();
 
@@ -45,13 +49,42 @@ public class DiskussionsEngine
             verlaufB.Add(new ChatMessage("user", eingabeB));
             string textB = await _client.SendeAsync(settings.Verbindung, settings.Verbindung.ModellB, verlaufB, ct);
             verlaufB.Add(new ChatMessage("assistant", textB));
-            var eintragB = new ChatEintrag(DateTime.Now, Sprecher.PersonaB, textB);
+            var eintragB = new ChatEintrag(DateTime.Now, Sprecher.PersonaB, nameB, textB);
             logger.Schreiben(eintragB);
             NeuerEintrag?.Invoke(eintragB);
+            transkript.Add($"{nameB}: {textB}");
 
             letzterTextB = textB;
         }
+
+        if (settings.SchiedsrichterAktiv)
+        {
+            var eintragSchiedsrichter = await BewerteAsync(settings, transkript, nameA, nameB, ct);
+            logger.Schreiben(eintragSchiedsrichter);
+            NeuerEintrag?.Invoke(eintragSchiedsrichter);
+        }
     }
+
+    private async Task<ChatEintrag> BewerteAsync(AppSettings settings, List<string> transkript, string nameA, string nameB, CancellationToken ct)
+    {
+        string system =
+$@"Du bist ein unparteiischer Schiedsrichter für Debatten und ein ausgewiesener Experte zum Thema ""{settings.Thema}"" - du kennst die relevanten Fakten, den Forschungsstand und die gängigen Gegenargumente zu diesem Thema sehr genau.
+
+Du bekommst den vollständigen Diskussionsverlauf zwischen zwei Teilnehmern, ""{nameA}"" und ""{nameB}"", zu diesem Thema. Lies alle Thesen und Argumente sorgfältig und bewerte ausschließlich anhand der inhaltlichen Qualität der Argumentation - wer hat schlüssiger, sachlich fundierter und überzeugender argumentiert und ist besser auf die Gegenargumente eingegangen? Sympathie, Meinung oder Reihenfolge spielen keine Rolle.
+
+Antworte in diesem Format:
+Zeile 1: ""Gewinner: {nameA}"" oder ""Gewinner: {nameB}""
+Danach eine nachvollziehbare Begründung in 4 bis 8 Sätzen mit konkretem Bezug auf die stärksten bzw. schwächsten Argumente beider Seiten.";
+
+        string user = $"Diskussionsverlauf zum Thema \"{settings.Thema}\":\n\n{string.Join("\n\n", transkript)}";
+
+        var nachrichten = new List<ChatMessage> { new("system", system), new("user", user) };
+        string urteil = await _client.SendeAsync(settings.Verbindung, settings.Verbindung.ModellSchiedsrichter, nachrichten, ct);
+        return new ChatEintrag(DateTime.Now, Sprecher.Schiedsrichter, "Schiedsrichter", urteil);
+    }
+
+    private static string AnzeigeName(PersonaProfil p, string fallback) =>
+        string.IsNullOrWhiteSpace(p.Name) ? fallback : p.Name.Trim();
 
     private static string BeschreibeProfil(PersonaProfil p)
     {

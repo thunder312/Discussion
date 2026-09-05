@@ -19,7 +19,7 @@ public class DiskussionsLogger : IDisposable
 
     public void Schreiben(ChatEintrag eintrag)
     {
-        _writer.WriteLine($"{eintrag.Zeitpunkt:dd.MM.yyyy HH:mm}h {eintrag.SprecherName}: {eintrag.Text}");
+        _writer.WriteLine($"{eintrag.Zeitpunkt:dd.MM.yyyy HH:mm}h {eintrag.AnzeigeName}: {eintrag.Text}");
     }
 
     public void Dispose() => _writer.Dispose();

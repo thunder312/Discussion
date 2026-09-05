@@ -10,6 +10,7 @@ public enum Sprecher
 {
     PersonaA,
     PersonaB,
+    Schiedsrichter,
     System
 }
 

@@ -26,6 +26,7 @@ public class SprecherZuFarbeConverter : IValueConverter
 {
     private static readonly SolidColorBrush FarbeA = new(Color.FromRgb(0xDD, 0xEB, 0xFF));
     private static readonly SolidColorBrush FarbeB = new(Color.FromRgb(0xDD, 0xFF, 0xE1));
+    private static readonly SolidColorBrush FarbeSchiedsrichter = new(Color.FromRgb(0xFF, 0xF1, 0xC2));
     private static readonly SolidColorBrush FarbeSystem = new(Color.FromRgb(0xFF, 0xDD, 0xDD));
 
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) =>
@@ -34,6 +35,7 @@ public class SprecherZuFarbeConverter : IValueConverter
             {
                 Sprecher.PersonaA => FarbeA,
                 Sprecher.PersonaB => FarbeB,
+                Sprecher.Schiedsrichter => FarbeSchiedsrichter,
                 _ => FarbeSystem
             }
             : Brushes.White;
