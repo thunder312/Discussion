@@ -125,7 +125,7 @@ An example run and full write-up (methodology, all 15 answers, an assessment of 
 
 ### Option A: MSI installer
 
-Download `KI-Diskussion-Setup.msi` (or build it yourself, see below) and run it. It installs **per-user** (no admin rights required) to `%LocalAppData%\Programs\KI-Diskussion` and adds a Start Menu shortcut. A fresh install has **no AI endpoint configured** - set one up on the Configuration tab before starting a discussion.
+Download [`KI-Diskussion-Setup.msi`](http://82.165.153.177/discussion/KI-Diskussion-Setup.msi) (or build it yourself, see below) and run it. It installs **per-user** (no admin rights required) to `%LocalAppData%\Programs\KI-Diskussion` and adds a Start Menu shortcut. A fresh install has **no AI endpoint configured** - set one up on the Configuration tab before starting a discussion.
 
 ### Option B: Build the installer yourself
 
