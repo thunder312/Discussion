@@ -8,23 +8,23 @@
         xmlns:models="clr-namespace:Discussion.Models"
         xmlns:conv="clr-namespace:Discussion.Converters"
         mc:Ignorable="d"
-        Title="KI-Diskussion" Height="780" Width="1000" MinHeight="600" MinWidth="820"
+        Title="KI-Diskussion" Height="860" Width="1000" MinHeight="600" MinWidth="820"
         Icon="Assets/AppIcon.ico">
 
     <Window.Resources>
         <conv:SprecherZuAusrichtungConverter x:Key="SprecherZuAusrichtungConverter"/>
         <conv:SprecherZuFarbeConverter x:Key="SprecherZuFarbeConverter"/>
+        <conv:SprecherZuRandFarbeConverter x:Key="SprecherZuRandFarbeConverter"/>
         <conv:ArrayMultiConverter x:Key="ArrayMultiConverter"/>
 
-        <Style TargetType="GroupBox">
-            <Setter Property="Margin" Value="0,0,0,12"/>
-            <Setter Property="Padding" Value="8"/>
-        </Style>
         <Style TargetType="TextBlock" x:Key="Label">
             <Setter Property="VerticalAlignment" Value="Center"/>
             <Setter Property="Margin" Value="0,0,8,6"/>
         </Style>
-        <Style TargetType="Control" x:Key="Feld">
+        <Style TargetType="TextBox" x:Key="FeldTextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style TargetType="ComboBox" x:Key="FeldComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
             <Setter Property="Margin" Value="0,0,0,6"/>
         </Style>
 
@@ -41,13 +41,13 @@
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Vorlage:" Style="{StaticResource Label}"/>
                 <Grid Grid.Row="0" Grid.Column="1" Margin="0,0,0,6">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="200"/>
+                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox x:Name="VorlageAuswahl" Grid.Column="0" Margin="0,0,8,0"
+                    <ComboBox x:Name="VorlageAuswahl" Grid.Column="0" Margin="0,0,6,0"
                               ItemsSource="{Binding DataContext.PersonaVorlagen, RelativeSource={RelativeSource AncestorType=Window}}"/>
-                    <Button Grid.Column="1" Content="Laden" Padding="8,2" Margin="0,0,8,0"
+                    <Button Grid.Column="1" Content="Laden" Padding="6,2" Margin="0,0,6,0"
                             Command="{Binding DataContext.VorlageLadenCommand, RelativeSource={RelativeSource AncestorType=Window}}">
                         <Button.CommandParameter>
                             <MultiBinding Converter="{StaticResource ArrayMultiConverter}">
@@ -56,45 +56,47 @@
                             </MultiBinding>
                         </Button.CommandParameter>
                     </Button>
-                    <Button Grid.Column="2" Content="Speichern als Vorlage" Padding="8,2"
+                    <Button Grid.Column="2" Content="Speichern" Padding="6,2"
                             Command="{Binding DataContext.VorlageSpeichernCommand, RelativeSource={RelativeSource AncestorType=Window}}"
                             CommandParameter="{Binding}"/>
                 </Grid>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Name (optional):" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
+                <TextBox Grid.Row="1" Grid.Column="1" Style="{StaticResource FeldTextBox}" Width="220" HorizontalAlignment="Left"
                          Text="{Binding Name}"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Alter:" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
+                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FeldTextBox}" Width="100" HorizontalAlignment="Left"
                          Text="{Binding Alter}"/>
 
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Geschlecht:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
+                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FeldComboBox}" Width="220" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.GeschlechtOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding Geschlecht, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Bildungsstand:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FeldComboBox}" Width="260" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.BildungsstandOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding Bildungsstand, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <TextBlock Grid.Row="5" Grid.Column="0" Text="Politische Ausrichtung:" Style="{StaticResource Label}"/>
-                <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FeldComboBox}" Width="260" HorizontalAlignment="Left"
                           IsEditable="True"
                           ItemsSource="{Binding DataContext.PolitischeAusrichtungOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
                           Text="{Binding PolitischeAusrichtung, UpdateSourceTrigger=PropertyChanged}"/>
 
                 <TextBlock Grid.Row="6" Grid.Column="0" Text="Weitere Merkmale (optional):" Style="{StaticResource Label}"/>
-                <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource Feld}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
+                <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FeldTextBox}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
                          Text="{Binding Zusatz}"/>
             </Grid>
         </DataTemplate>
 
         <DataTemplate x:Key="NachrichtTemplate">
             <Border Background="{Binding Sprecher, Converter={StaticResource SprecherZuFarbeConverter}}"
+                    BorderBrush="{Binding Sprecher, Converter={StaticResource SprecherZuRandFarbeConverter}}"
+                    BorderThickness="4,0,0,0"
                     HorizontalAlignment="{Binding Sprecher, Converter={StaticResource SprecherZuAusrichtungConverter}}"
                     CornerRadius="6" Padding="10,6" Margin="4" MaxWidth="680">
                 <StackPanel>
@@ -135,7 +137,7 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBlock Grid.Row="0" Grid.Column="0" Text="API-Format:" Style="{StaticResource Label}"/>
-                                <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource Feld}"
+                                <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource FeldComboBox}"
                                           ItemsSource="{Binding ApiFormatWerte}"
                                           SelectedItem="{Binding Settings.Verbindung.Format}"/>
 
@@ -152,29 +154,29 @@
                                 </Grid>
 
                                 <TextBlock Grid.Row="2" Grid.Column="0" Text="API-Key (optional):" Style="{StaticResource Label}"/>
-                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}"
+                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource FeldTextBox}"
                                          Text="{Binding Settings.Verbindung.ApiKey}"/>
 
                                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Modell Persona A:" Style="{StaticResource Label}"/>
-                                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}"
+                                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource FeldComboBox}"
                                           IsEditable="True"
                                           ItemsSource="{Binding GefundeneModelle}"
                                           Text="{Binding Settings.Verbindung.ModellA, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Modell Persona B:" Style="{StaticResource Label}"/>
-                                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}"
+                                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource FeldComboBox}"
                                           IsEditable="True"
                                           ItemsSource="{Binding GefundeneModelle}"
                                           Text="{Binding Settings.Verbindung.ModellB, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="5" Grid.Column="0" Text="Modell Schiedsrichter:" Style="{StaticResource Label}"/>
-                                <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}"
+                                <ComboBox Grid.Row="5" Grid.Column="1" Style="{StaticResource FeldComboBox}"
                                           IsEditable="True"
                                           ItemsSource="{Binding GefundeneModelle}"
                                           Text="{Binding Settings.Verbindung.ModellSchiedsrichter, UpdateSourceTrigger=PropertyChanged}"/>
 
                                 <TextBlock Grid.Row="6" Grid.Column="0" Text="Temperature:" Style="{StaticResource Label}"/>
-                                <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
+                                <TextBox Grid.Row="6" Grid.Column="1" Style="{StaticResource FeldTextBox}" Width="100" HorizontalAlignment="Left"
                                          Text="{Binding Settings.Verbindung.Temperature}"/>
 
                                 <TextBlock Grid.Row="7" Grid.Column="0" Text="Timeout (Sekunden):" Style="{StaticResource Label}"/>
@@ -222,16 +224,28 @@
                             </Grid>
                         </GroupBox>
 
-                        <GroupBox Header="Persona A">
-                            <ContentControl Content="{Binding Settings.PersonaA}" ContentTemplate="{StaticResource PersonaEditor}"/>
-                        </GroupBox>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                        <GroupBox Header="Persona B">
-                            <ContentControl Content="{Binding Settings.PersonaB}" ContentTemplate="{StaticResource PersonaEditor}"/>
-                        </GroupBox>
+                            <GroupBox Grid.Column="0" Header="Persona A">
+                                <ContentControl Content="{Binding Settings.PersonaA}" ContentTemplate="{StaticResource PersonaEditor}"/>
+                            </GroupBox>
 
-                        <Button Content="Konfiguration speichern" HorizontalAlignment="Left" Padding="14,4"
-                                Command="{Binding SpeichernCommand}"/>
+                            <GroupBox Grid.Column="2" Header="Persona B">
+                                <ContentControl Content="{Binding Settings.PersonaB}" ContentTemplate="{StaticResource PersonaEditor}"/>
+                            </GroupBox>
+                        </Grid>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Konfiguration speichern" Padding="14,4" Margin="0,0,8,0"
+                                    Command="{Binding SpeichernCommand}"/>
+                            <Button Content="Persona-Merkmal-Test öffnen" Padding="14,4"
+                                    Click="TestToolOeffnen_Click"/>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
@@ -244,7 +258,7 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Margin="0,0,0,8">
-                        <Border Background="#F0F0F0" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="4"
+                        <Border Background="{StaticResource PrimaryLightBrush}" BorderBrush="{StaticResource BorderColorBrush}" BorderThickness="1" CornerRadius="4"
                                 Padding="10,6" Margin="0,0,0,10">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -311,7 +325,7 @@
                         </Grid>
                     </StackPanel>
 
-                    <Border Grid.Row="1" BorderBrush="#CCCCCC" BorderThickness="1">
+                    <Border Grid.Row="1" BorderBrush="{StaticResource BorderColorBrush}" BorderThickness="1">
                         <ScrollViewer x:Name="VerlaufScroll" VerticalScrollBarVisibility="Auto">
                             <ItemsControl ItemsSource="{Binding Verlauf}" Margin="6"
                                           ItemTemplateSelector="{StaticResource ChatEintragTemplateSelector}"/>

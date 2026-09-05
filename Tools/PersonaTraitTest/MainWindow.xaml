@@ -45,7 +45,7 @@
                        FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
         </Grid>
 
-        <Border Grid.Row="4" BorderBrush="#CCCCCC" BorderThickness="1">
+        <Border Grid.Row="4" BorderBrush="{StaticResource BorderColorBrush}" BorderThickness="1">
             <ScrollViewer x:Name="LogScroll" VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding LogZeilen}" Margin="6">
                     <ItemsControl.ItemTemplate>
