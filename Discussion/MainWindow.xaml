@@ -1,0 +1,219 @@
+<Window x:Class="Discussion.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Discussion"
+        xmlns:vm="clr-namespace:Discussion.ViewModels"
+        xmlns:models="clr-namespace:Discussion.Models"
+        xmlns:conv="clr-namespace:Discussion.Converters"
+        mc:Ignorable="d"
+        Title="KI-Diskussion" Height="780" Width="1000" MinHeight="600" MinWidth="820">
+
+    <Window.Resources>
+        <conv:SprecherZuAusrichtungConverter x:Key="SprecherZuAusrichtungConverter"/>
+        <conv:SprecherZuFarbeConverter x:Key="SprecherZuFarbeConverter"/>
+
+        <Style TargetType="GroupBox">
+            <Setter Property="Margin" Value="0,0,0,12"/>
+            <Setter Property="Padding" Value="8"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="Label">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="0,0,8,6"/>
+        </Style>
+        <Style TargetType="Control" x:Key="Feld">
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+
+        <DataTemplate x:Key="PersonaEditor">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Alter:" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
+                         Text="{Binding Alter}"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Geschlecht:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="1" Grid.Column="1" Style="{StaticResource Feld}" Width="220" HorizontalAlignment="Left"
+                          IsEditable="True"
+                          ItemsSource="{Binding DataContext.GeschlechtOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
+                          Text="{Binding Geschlecht, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Bildungsstand:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                          IsEditable="True"
+                          ItemsSource="{Binding DataContext.BildungsstandOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
+                          Text="{Binding Bildungsstand, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Politische Ausrichtung:" Style="{StaticResource Label}"/>
+                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}" Width="260" HorizontalAlignment="Left"
+                          IsEditable="True"
+                          ItemsSource="{Binding DataContext.PolitischeAusrichtungOptionen, RelativeSource={RelativeSource AncestorType=Window}}"
+                          Text="{Binding PolitischeAusrichtung, UpdateSourceTrigger=PropertyChanged}"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Weitere Merkmale (optional):" Style="{StaticResource Label}"/>
+                <TextBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}" AcceptsReturn="True" Height="50" TextWrapping="Wrap"
+                         Text="{Binding Zusatz}"/>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate DataType="{x:Type models:ChatEintrag}">
+            <Border Background="{Binding Sprecher, Converter={StaticResource SprecherZuFarbeConverter}}"
+                    HorizontalAlignment="{Binding Sprecher, Converter={StaticResource SprecherZuAusrichtungConverter}}"
+                    CornerRadius="6" Padding="10,6" Margin="4" MaxWidth="680">
+                <StackPanel>
+                    <DockPanel LastChildFill="False">
+                        <TextBlock Text="{Binding SprecherName}" FontWeight="Bold" FontSize="11" Opacity="0.7" DockPanel.Dock="Left"/>
+                        <TextBlock Text="{Binding ZeitAnzeige}" FontSize="10" Opacity="0.5" DockPanel.Dock="Right"/>
+                    </DockPanel>
+                    <TextBlock Text="{Binding Text}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid Margin="10">
+        <TabControl>
+            <TabItem Header="Konfiguration">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="4">
+                    <StackPanel>
+
+                        <GroupBox Header="KI-Verbindung">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/><RowDefinition/><RowDefinition/>
+                                    <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="API-Format:" Style="{StaticResource Label}"/>
+                                <ComboBox Grid.Row="0" Grid.Column="1" Style="{StaticResource Feld}"
+                                          ItemsSource="{Binding ApiFormatWerte}"
+                                          SelectedItem="{Binding Settings.Verbindung.Format}"/>
+
+                                <TextBlock Grid.Row="1" Grid.Column="0" Text="Endpunkt-URL:" Style="{StaticResource Label}"/>
+                                <Grid Grid.Row="1" Grid.Column="1" Margin="0,0,0,6">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox Grid.Column="0" Margin="0,0,8,0"
+                                             Text="{Binding Settings.Verbindung.BasisUrl}"/>
+                                    <Button Grid.Column="1" Content="LLM suchen" Padding="10,2"
+                                            Command="{Binding LlmSuchenCommand}"/>
+                                </Grid>
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="API-Key (optional):" Style="{StaticResource Label}"/>
+                                <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource Feld}"
+                                         Text="{Binding Settings.Verbindung.ApiKey}"/>
+
+                                <TextBlock Grid.Row="3" Grid.Column="0" Text="Modell Persona A:" Style="{StaticResource Label}"/>
+                                <ComboBox Grid.Row="3" Grid.Column="1" Style="{StaticResource Feld}"
+                                          IsEditable="True"
+                                          ItemsSource="{Binding GefundeneModelle}"
+                                          Text="{Binding Settings.Verbindung.ModellA, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                <TextBlock Grid.Row="4" Grid.Column="0" Text="Modell Persona B:" Style="{StaticResource Label}"/>
+                                <ComboBox Grid.Row="4" Grid.Column="1" Style="{StaticResource Feld}"
+                                          IsEditable="True"
+                                          ItemsSource="{Binding GefundeneModelle}"
+                                          Text="{Binding Settings.Verbindung.ModellB, UpdateSourceTrigger=PropertyChanged}"/>
+
+                                <TextBlock Grid.Row="5" Grid.Column="0" Text="Temperature:" Style="{StaticResource Label}"/>
+                                <TextBox Grid.Row="5" Grid.Column="1" Style="{StaticResource Feld}" Width="100" HorizontalAlignment="Left"
+                                         Text="{Binding Settings.Verbindung.Temperature}"/>
+
+                                <TextBlock Grid.Row="6" Grid.Column="0" Text="Timeout (Sekunden):" Style="{StaticResource Label}"/>
+                                <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Horizontal">
+                                    <TextBox Width="100" HorizontalAlignment="Left" Margin="0,0,12,6"
+                                             Text="{Binding Settings.Verbindung.TimeoutSekunden}"/>
+                                    <Button Content="Verbindung testen" Padding="10,2" Command="{Binding TestVerbindungCommand}"/>
+                                </StackPanel>
+                            </Grid>
+                        </GroupBox>
+
+                        <GroupBox Header="Persona A">
+                            <ContentControl Content="{Binding Settings.PersonaA}" ContentTemplate="{StaticResource PersonaEditor}"/>
+                        </GroupBox>
+
+                        <GroupBox Header="Persona B">
+                            <ContentControl Content="{Binding Settings.PersonaB}" ContentTemplate="{StaticResource PersonaEditor}"/>
+                        </GroupBox>
+
+                        <Button Content="Konfiguration speichern" HorizontalAlignment="Left" Padding="14,4"
+                                Command="{Binding SpeichernCommand}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="Diskussion">
+                <Grid Margin="4">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                        <TextBlock Text="Thema" FontWeight="Bold" Margin="0,0,0,2"/>
+                        <TextBox Text="{Binding Settings.Thema, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
+
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Position Persona A:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <ComboBox Grid.Column="1" VerticalAlignment="Center"
+                                      ItemsSource="{Binding PositionWerte}"
+                                      SelectedItem="{Binding PositionPersonaA}"/>
+                            <TextBlock Grid.Column="2" Text="Position Persona B (ergibt sich automatisch aus A):"
+                                       VerticalAlignment="Center" Margin="16,0,6,0" FontStyle="Italic"/>
+                            <TextBlock Grid.Column="3" Text="{Binding PositionPersonaBAnzeige}"
+                                       VerticalAlignment="Center" FontWeight="Bold"/>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="70"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0" Text="Max. Texte je Persona:" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBox Grid.Column="1" VerticalAlignment="Center"
+                                     Text="{Binding Settings.MaxTexteJePersona}"/>
+                            <TextBlock Grid.Column="2" Text="{Binding Status}" VerticalAlignment="Center"
+                                       Margin="12,0" FontStyle="Italic" TextTrimming="CharacterEllipsis"/>
+                            <Button Grid.Column="3" Content="Start" Padding="18,4" Margin="0,0,6,0"
+                                    Command="{Binding StartCommand}"/>
+                            <Button Grid.Column="4" Content="Stopp" Padding="18,4"
+                                    Command="{Binding StopCommand}"/>
+                        </Grid>
+                    </StackPanel>
+
+                    <Border Grid.Row="1" BorderBrush="#CCCCCC" BorderThickness="1">
+                        <ScrollViewer x:Name="VerlaufScroll" VerticalScrollBarVisibility="Auto">
+                            <ItemsControl ItemsSource="{Binding Verlauf}" Margin="6"/>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
