@@ -2,13 +2,16 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
     <Package Name="KI-Diskussion"
              Manufacturer="Daniel Ertl"
-             Version="1.0.1.0"
+             Version="1.0.2.0"
              UpgradeCode="6E821D90-D46B-4A21-BF40-2483A36F8018"
              Language="1033"
              Scope="perUser">
 
         <MajorUpgrade DowngradeErrorMessage="Eine neuere Version von KI-Diskussion ist bereits installiert." />
         <MediaTemplate EmbedCab="yes" />
+
+        <Icon Id="AppIcon.ico" SourceFile="..\Discussion\Assets\AppIcon.ico" />
+        <Property Id="ARPPRODUCTICON" Value="AppIcon.ico" />
 
         <StandardDirectory Id="LocalAppDataFolder">
             <Directory Id="ProgramsFolder" Name="Programs">

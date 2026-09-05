@@ -8,7 +8,8 @@
         xmlns:models="clr-namespace:Discussion.Models"
         xmlns:conv="clr-namespace:Discussion.Converters"
         mc:Ignorable="d"
-        Title="KI-Diskussion" Height="780" Width="1000" MinHeight="600" MinWidth="820">
+        Title="KI-Diskussion" Height="780" Width="1000" MinHeight="600" MinWidth="820"
+        Icon="Assets/AppIcon.ico">
 
     <Window.Resources>
         <conv:SprecherZuAusrichtungConverter x:Key="SprecherZuAusrichtungConverter"/>
