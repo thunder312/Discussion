@@ -47,6 +47,31 @@ public class MainViewModel : INotifyPropertyChanged
 
     public string PositionPersonaBAnzeige => PositionPersonaA.Gegenteil().ToString();
 
+    private int _aktuelleRunde;
+    public int AktuelleRunde
+    {
+        get => _aktuelleRunde;
+        private set { _aktuelleRunde = value; OnPropertyChanged(); OnPropertyChanged(nameof(RundenAnzeige)); }
+    }
+
+    private int _gesamtRunden;
+    public int GesamtRunden
+    {
+        get => _gesamtRunden;
+        private set { _gesamtRunden = value; OnPropertyChanged(); OnPropertyChanged(nameof(RundenAnzeige)); }
+    }
+
+    public string RundenAnzeige => GesamtRunden > 0 ? $"{AktuelleRunde} / {GesamtRunden}" : "–";
+
+    private string _etaAnzeige = "–";
+    public string EtaAnzeige
+    {
+        get => _etaAnzeige;
+        private set { _etaAnzeige = value; OnPropertyChanged(); }
+    }
+
+    private DateTime _startZeit;
+
     private bool _laeuft;
     public bool Laeuft
     {
@@ -93,6 +118,10 @@ public class MainViewModel : INotifyPropertyChanged
         ConfigService.Speichern(Settings);
         Verlauf.Clear();
         Laeuft = true;
+        AktuelleRunde = 0;
+        GesamtRunden = Settings.MaxTexteJePersona;
+        EtaAnzeige = "wird berechnet...";
+        _startZeit = DateTime.Now;
         _cts = new CancellationTokenSource();
         DiskussionsLogger? logger = null;
         try
@@ -102,13 +131,16 @@ public class MainViewModel : INotifyPropertyChanged
 
             var engine = new DiskussionsEngine(_client);
             engine.NeuerEintrag += eintrag => Verlauf.Add(eintrag);
+            engine.FortschrittGeaendert += AktualisiereFortschritt;
             await engine.StartenAsync(Settings, logger, _cts.Token);
 
             Status = "Diskussion beendet.";
+            EtaAnzeige = "Fertig";
         }
         catch (OperationCanceledException)
         {
             Status = "Abgebrochen.";
+            EtaAnzeige = "–";
         }
         catch (KiVerbindungsFehler ex)
         {
@@ -116,6 +148,7 @@ public class MainViewModel : INotifyPropertyChanged
             Verlauf.Add(fehlerEintrag);
             logger?.Schreiben(fehlerEintrag);
             Status = "Fehler - siehe Verlauf.";
+            EtaAnzeige = "–";
         }
         finally
         {
@@ -123,6 +156,34 @@ public class MainViewModel : INotifyPropertyChanged
             Laeuft = false;
             _cts = null;
         }
+    }
+
+    private void AktualisiereFortschritt(int aktuelleRunde, int gesamtRunden)
+    {
+        AktuelleRunde = aktuelleRunde;
+        GesamtRunden = gesamtRunden;
+
+        int abgeschlosseneRunden = aktuelleRunde - 1;
+        if (abgeschlosseneRunden <= 0)
+        {
+            EtaAnzeige = "wird berechnet...";
+            return;
+        }
+
+        double elapsedSekunden = (DateTime.Now - _startZeit).TotalSeconds;
+        double sekundenProRunde = elapsedSekunden / abgeschlosseneRunden;
+        int restRunden = gesamtRunden - abgeschlosseneRunden;
+        EtaAnzeige = FormatiereDauer(sekundenProRunde * restRunden);
+    }
+
+    private static string FormatiereDauer(double sekunden)
+    {
+        if (sekunden < 1)
+            return "< 1 s";
+        var dauer = TimeSpan.FromSeconds(sekunden);
+        return dauer.TotalMinutes >= 1
+            ? $"~{(int)dauer.TotalMinutes} min {dauer.Seconds} s"
+            : $"~{(int)dauer.TotalSeconds} s";
     }
 
     private void Stoppen()

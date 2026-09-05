@@ -6,7 +6,7 @@ public class AppSettings
     public PersonaProfil PersonaA { get; set; } = new();
     public PersonaProfil PersonaB { get; set; } = new();
     public string Thema { get; set; } = "";
-    public int MaxTexteJePersona { get; set; } = 10;
+    public int MaxTexteJePersona { get; set; } = 5;
     public Position PositionPersonaA { get; set; } = Position.Pro;
     public bool SchiedsrichterAktiv { get; set; } = true;
 
@@ -34,6 +34,6 @@ public class AppSettings
             Zusatz = ""
         },
         Thema = "Soll Zucker verboten werden?",
-        MaxTexteJePersona = 10
+        MaxTexteJePersona = 5
     };
 }

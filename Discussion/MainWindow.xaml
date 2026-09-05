@@ -174,6 +174,23 @@
                     </Grid.RowDefinitions>
 
                     <StackPanel Grid.Row="0" Margin="0,0,0,8">
+                        <Border Background="#F0F0F0" BorderBrush="#CCCCCC" BorderThickness="1" CornerRadius="4"
+                                Padding="10,6" Margin="0,0,0,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0" Text="Aktuelle Runde:" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding RundenAnzeige}" VerticalAlignment="Center" Margin="0,0,24,0"/>
+                                <TextBlock Grid.Column="2" Text="Verbleibende Zeit (ETA):" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Grid.Column="3" Text="{Binding EtaAnzeige}" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+
                         <TextBlock Text="Thema" FontWeight="Bold" Margin="0,0,0,2"/>
                         <TextBox Text="{Binding Settings.Thema, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,8"/>
 

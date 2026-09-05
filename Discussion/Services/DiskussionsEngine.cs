@@ -7,6 +7,7 @@ public class DiskussionsEngine
     private readonly IKiClient _client;
 
     public event Action<ChatEintrag>? NeuerEintrag;
+    public event Action<int, int>? FortschrittGeaendert;
 
     public DiskussionsEngine(IKiClient client)
     {
@@ -29,6 +30,7 @@ public class DiskussionsEngine
         for (int runde = 1; runde <= settings.MaxTexteJePersona; runde++)
         {
             ct.ThrowIfCancellationRequested();
+            FortschrittGeaendert?.Invoke(runde, settings.MaxTexteJePersona);
 
             string eingabeA = letzterTextB is null
                 ? $"Eröffne die Diskussion zum Thema \"{settings.Thema}\". Formuliere deine Eröffnungsthese entsprechend deiner festgelegten Position."
