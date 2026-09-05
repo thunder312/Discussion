@@ -90,7 +90,23 @@ Danach eine nachvollziehbare Begründung in 4 bis 8 Sätzen mit konkretem Bezug 
         string user = $"Diskussionsverlauf zum Thema \"{settings.Thema}\":\n\n{string.Join("\n\n", transkript)}";
 
         var nachrichten = new List<ChatMessage> { new("system", system), new("user", user) };
-        string urteil = await _client.SendeAsync(settings.Verbindung, settings.Verbindung.ModellSchiedsrichter, nachrichten, ct);
+
+        // Der Schiedsrichter muss das komplette Transkript verarbeiten und braucht dadurch
+        // spürbar länger als eine einzelne Runden-Antwort - eigener, grosszügigerer Timeout,
+        // unabhängig vom normalen Runden-Timeout.
+        var verbindungSchiedsrichter = new KiVerbindung
+        {
+            Format = settings.Verbindung.Format,
+            BasisUrl = settings.Verbindung.BasisUrl,
+            ApiKey = settings.Verbindung.ApiKey,
+            ModellA = settings.Verbindung.ModellA,
+            ModellB = settings.Verbindung.ModellB,
+            ModellSchiedsrichter = settings.Verbindung.ModellSchiedsrichter,
+            Temperature = settings.Verbindung.Temperature,
+            TimeoutSekunden = Math.Max(settings.Verbindung.TimeoutSekunden * 2, 300)
+        };
+
+        string urteil = await _client.SendeAsync(verbindungSchiedsrichter, settings.Verbindung.ModellSchiedsrichter, nachrichten, ct);
         return new ChatEintrag(DateTime.Now, Sprecher.Schiedsrichter, "Schiedsrichter", urteil);
     }
 

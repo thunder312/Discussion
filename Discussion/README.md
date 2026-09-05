@@ -104,7 +104,7 @@ docs/screenshots/    Screenshots used in this README
   - **Ollama**: `POST {url}/api/chat`, `{"model", "messages", "stream": false, "options": {"temperature"}}`, response read from `message.content`.
   - **OpenAI-compatible**: `POST {url}/v1/chat/completions`, optional `Authorization: Bearer <key>`, response read from `choices[0].message.content`.
 - **Model discovery** ("Search models" button, also run automatically on startup if an endpoint is already configured) calls `GET {origin}/api/tags` (Ollama) or `GET {origin}/v1/models` (OpenAI-compatible) and fills the model dropdowns for all three roles.
-- Every request uses a per-call timeout (`TimeoutSekunden`, default 300s) via a linked `CancellationTokenSource`.
+- Every request uses a per-call timeout (`TimeoutSekunden`, default 300s) via a linked `CancellationTokenSource`. The referee call gets its own, larger timeout (double the configured value, floor 300s) since it has to process the full transcript and takes noticeably longer than a single round.
 
 ## C. Testing tool: PersonaTraitTest
 
@@ -119,7 +119,6 @@ An example run and full write-up (methodology, all 15 answers, an assessment of 
 
 ## D. Known issues / ToDo
 
-- **The referee call can still hit the configured timeout**, especially on slower/local models or right after a long multi-round discussion has already kept the endpoint busy. A longer/separate timeout (or a retry) for the referee call specifically would help.
 - Persona templates can be saved and loaded, but not deleted from the UI (the JSON files can be removed manually from the configured/standard folder).
 - Some local models leave a stray stop-token fragment (e.g. `|im_end|>`) in their response text, which is passed through as-is.
 
