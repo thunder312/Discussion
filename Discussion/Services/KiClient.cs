@@ -1,3 +1,4 @@
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -9,6 +10,12 @@ namespace Discussion.Services;
 public class KiClient : IKiClient
 {
     private static readonly HttpClient Http = new();
+
+    /// <summary>
+    /// Wie lange ohne neu ankommende Daten gewartet wird, bevor <see cref="SendeLangeAsync"/>
+    /// die Verbindung als nicht mehr sinnvoll laufend betrachtet und abbricht.
+    /// </summary>
+    private static readonly TimeSpan LeerlaufTimeout = TimeSpan.FromSeconds(120);
 
     public async Task<string> SendeAsync(KiVerbindung v, string modell, IReadOnlyList<ChatMessage> nachrichten, CancellationToken ct)
     {
@@ -71,6 +78,114 @@ public class KiClient : IKiClient
         {
             throw new KiVerbindungsFehler($"Antwort von {v.BasisUrl} konnte nicht gelesen werden: {ex.Message} (Rohdaten: {Kuerzen(body)})");
         }
+    }
+
+    public async Task<string> SendeLangeAsync(KiVerbindung v, string modell, IReadOnlyList<ChatMessage> nachrichten, CancellationToken ct)
+    {
+        using var leerlaufCts = new CancellationTokenSource();
+        using var verknuepft = CancellationTokenSource.CreateLinkedTokenSource(ct, leerlaufCts.Token);
+        leerlaufCts.CancelAfter(LeerlaufTimeout);
+
+        object payload = v.Format == ApiFormat.Ollama
+            ? new
+            {
+                model = modell,
+                messages = nachrichten.Select(m => new { role = m.Role, content = m.Content }),
+                stream = true,
+                options = new { temperature = v.Temperature }
+            }
+            : new
+            {
+                model = modell,
+                messages = nachrichten.Select(m => new { role = m.Role, content = m.Content }),
+                temperature = v.Temperature,
+                stream = true
+            };
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, v.BasisUrl)
+        {
+            Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
+        };
+        if (!string.IsNullOrWhiteSpace(v.ApiKey))
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", v.ApiKey);
+
+        HttpResponseMessage response;
+        try
+        {
+            response = await Http.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, verknuepft.Token);
+        }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            throw new KiVerbindungsFehler($"Keine Antwort von {v.BasisUrl} innerhalb von {LeerlaufTimeout.TotalSeconds:F0}s (Verbindungsaufbau).");
+        }
+        catch (HttpRequestException ex)
+        {
+            throw new KiVerbindungsFehler($"KI unter {v.BasisUrl} nicht erreichbar: {ex.Message}");
+        }
+
+        if (!response.IsSuccessStatusCode)
+        {
+            string fehlerBody = await response.Content.ReadAsStringAsync(ct);
+            throw new KiVerbindungsFehler($"HTTP {(int)response.StatusCode} von {v.BasisUrl}: {Kuerzen(fehlerBody)}");
+        }
+
+        var teile = new StringBuilder();
+        await using var stream = await response.Content.ReadAsStreamAsync(ct);
+        using var reader = new StreamReader(stream);
+
+        while (true)
+        {
+            string? zeile;
+            try
+            {
+                zeile = await reader.ReadLineAsync(verknuepft.Token);
+            }
+            catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+            {
+                throw new KiVerbindungsFehler(
+                    $"Schiedsrichter: seit {LeerlaufTimeout.TotalSeconds:F0}s keine neuen Daten mehr von {v.BasisUrl} erhalten - Verbindung wirkt nicht mehr aktiv.");
+            }
+
+            if (zeile == null)
+                break;
+
+            leerlaufCts.CancelAfter(LeerlaufTimeout);
+
+            if (string.IsNullOrWhiteSpace(zeile))
+                continue;
+
+            if (v.Format == ApiFormat.Ollama)
+            {
+                using var doc = JsonDocument.Parse(zeile);
+                if (doc.RootElement.TryGetProperty("error", out var fehlerElement))
+                    throw new KiVerbindungsFehler($"Ollama-Fehler: {fehlerElement.GetString()}");
+                if (doc.RootElement.TryGetProperty("message", out var nachricht) &&
+                    nachricht.TryGetProperty("content", out var inhalt))
+                    teile.Append(inhalt.GetString());
+                if (doc.RootElement.TryGetProperty("done", out var fertig) && fertig.GetBoolean())
+                    break;
+            }
+            else
+            {
+                if (!zeile.StartsWith("data:"))
+                    continue;
+                string daten = zeile["data:".Length..].Trim();
+                if (daten == "[DONE]")
+                    break;
+
+                using var doc = JsonDocument.Parse(daten);
+                var choice = doc.RootElement.GetProperty("choices")[0];
+                if (choice.TryGetProperty("delta", out var delta) &&
+                    delta.TryGetProperty("content", out var inhalt) &&
+                    inhalt.ValueKind == JsonValueKind.String)
+                    teile.Append(inhalt.GetString());
+            }
+        }
+
+        string ergebnis = teile.ToString().Trim();
+        if (string.IsNullOrWhiteSpace(ergebnis))
+            throw new KiVerbindungsFehler("Die KI hat eine leere Antwort geliefert.");
+        return ergebnis;
     }
 
     public async Task<List<string>> ListeModelleAsync(KiVerbindung v, CancellationToken ct)

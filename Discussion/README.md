@@ -104,7 +104,8 @@ docs/screenshots/    Screenshots used in this README
   - **Ollama**: `POST {url}/api/chat`, `{"model", "messages", "stream": false, "options": {"temperature"}}`, response read from `message.content`.
   - **OpenAI-compatible**: `POST {url}/v1/chat/completions`, optional `Authorization: Bearer <key>`, response read from `choices[0].message.content`.
 - **Model discovery** ("Search models" button, also run automatically on startup if an endpoint is already configured) calls `GET {origin}/api/tags` (Ollama) or `GET {origin}/v1/models` (OpenAI-compatible) and fills the model dropdowns for all three roles.
-- Every request uses a per-call timeout (`TimeoutSekunden`, default 300s) via a linked `CancellationTokenSource`. The referee call gets its own, larger timeout (double the configured value, floor 300s) since it has to process the full transcript and takes noticeably longer than a single round.
+- Persona A/B round calls use the configured per-call timeout (`TimeoutSekunden`, default 300s) via a linked `CancellationTokenSource` (`KiClient.SendeAsync`).
+- The **referee call has no overall time limit** - it has to process the full transcript and can genuinely take much longer than a single round on a busy/slow endpoint. Instead, `KiClient.SendeLangeAsync` streams the response (`stream: true`) and uses an **idle watchdog**: it only aborts if no new data arrives for 120s in a row, resetting on every received chunk. That way it keeps running as long as the model is actually producing output, and only gives up if the connection genuinely stalls.
 
 ## C. Testing tool: PersonaTraitTest
 
