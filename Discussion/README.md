@@ -127,7 +127,7 @@ An example run and full write-up (methodology, all 15 answers, an assessment of 
 
 ### Option A: MSI installer
 
-Download `KI-Diskussion-Setup.msi` (or build it yourself, see below) and run it. It installs **per-user** (no admin rights required) to `%LocalAppData%\Programs\KI-Diskussion` and adds a Start Menu shortcut. A fresh install has **no AI endpoint configured** - set one up on the Configuration tab before starting a discussion.
+Download `KI-Diskussion-Setup.msi` (or build it yourself, see below) and run it. It installs **per-user** (no admin rights required) to `%LocalAppData%\Programs\KI-Diskussion`, bundles both `Discussion.exe` and `Tools/PersonaTraitTest`'s `PersonaTraitTest.exe`, and adds a Start Menu shortcut for each. A fresh install has **no AI endpoint configured** - set one up on the Configuration tab before starting a discussion.
 
 ### Option B: Build the installer yourself
 
@@ -135,6 +135,9 @@ Requires the WiX v5 CLI (`dotnet tool install --global wix`):
 
 ```powershell
 dotnet publish Discussion/Discussion.csproj -c Release -r win-x64 --self-contained true `
+    -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o installer/publish
+
+dotnet publish Tools/PersonaTraitTest/PersonaTraitTest.csproj -c Release -r win-x64 --self-contained true `
     -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o installer/publish
 
 wix build installer/Product.wxs -arch x64 -o installer/KI-Diskussion-Setup.msi
