@@ -1,6 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Discussion", "Discussion\Discussion.csproj", "{8F68F316-7FA9-4571-BAB0-701656EB9CB7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{78253FA3-A7CF-4FE8-9D3D-DC523AFC90CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonaTraitTest", "Tools\PersonaTraitTest\PersonaTraitTest.csproj", "{301A22E6-C4FB-4818-9807-0D7AF61495D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -12,5 +17,12 @@ Global
 		{8F68F316-7FA9-4571-BAB0-701656EB9CB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8F68F316-7FA9-4571-BAB0-701656EB9CB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8F68F316-7FA9-4571-BAB0-701656EB9CB7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{301A22E6-C4FB-4818-9807-0D7AF61495D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{301A22E6-C4FB-4818-9807-0D7AF61495D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{301A22E6-C4FB-4818-9807-0D7AF61495D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{301A22E6-C4FB-4818-9807-0D7AF61495D2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{301A22E6-C4FB-4818-9807-0D7AF61495D2} = {78253FA3-A7CF-4FE8-9D3D-DC523AFC90CA}
 	EndGlobalSection
 EndGlobal
