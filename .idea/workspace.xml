@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f181dda1-4f52-4413-a51e-a71ab27e4d8c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Discussion/AboutFenster.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/AboutFenster.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Discussion/MainWindow.xaml" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/MainWindow.xaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Discussion/MainWindow.xaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/MainWindow.xaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Discussion/Theme.xaml" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/Theme.xaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml.cs" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "thunder312"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/thunder312/Discussion.git",
+    "accountId": "592e7eba-e2db-4022-82ea-68df3d0d9ec6"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 3,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3LmYW6IbCM58AYrWyPS3OdZi1yd" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/Dropbox/Entwicklung/Discussion",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-56aff7b04f6f-JavaScript-WS-263.7307.202" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f181dda1-4f52-4413-a51e-a71ab27e4d8c" name="Changes" comment="" />
+      <created>1794060738716</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1794060738716</updated>
+      <workItem from="1794060739747" duration="704000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

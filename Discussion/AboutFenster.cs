@@ -19,6 +19,8 @@ public sealed class AboutFenster : Window
         ResizeMode = ResizeMode.NoResize;
         ShowInTaskbar = false;
         Background = (Brush)FindResource("SurfaceBrush");
+        Foreground = (Brush)FindResource("TextBrush");
+        DunkleTitelleiste.Anwenden(this);
 
         var logo = new Image
         {

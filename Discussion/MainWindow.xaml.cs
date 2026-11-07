@@ -13,6 +13,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        DunkleTitelleiste.Anwenden(this);
         _viewModel = new MainViewModel();
         DataContext = _viewModel;
         _viewModel.Verlauf.CollectionChanged += Verlauf_CollectionChanged;

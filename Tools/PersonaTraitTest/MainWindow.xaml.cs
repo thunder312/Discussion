@@ -26,6 +26,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        Discussion.DunkleTitelleiste.Anwenden(this);
         DataContext = _viewModel;
         _viewModel.LogZeilen.CollectionChanged += LogZeilen_CollectionChanged;
 
