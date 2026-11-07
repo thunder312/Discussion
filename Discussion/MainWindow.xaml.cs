@@ -1,4 +1,4 @@
-using System.Collections.Specialized;
+﻿using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -22,6 +22,12 @@ public partial class MainWindow : Window
     {
         if (e.Action == NotifyCollectionChangedAction.Add)
             Dispatcher.BeginInvoke(() => VerlaufScroll.ScrollToEnd());
+    }
+
+    private void Ueber_Click(object sender, RoutedEventArgs e)
+    {
+        var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        new AboutFenster(this, version is null ? "?" : $"{version.Major}.{version.Minor}.{version.Build}").ShowDialog();
     }
 
     private void TestToolOeffnen_Click(object sender, RoutedEventArgs e)
