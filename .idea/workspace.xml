@@ -5,12 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f181dda1-4f52-4413-a51e-a71ab27e4d8c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Discussion/AboutFenster.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/AboutFenster.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Discussion/Discussion.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/Discussion.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Discussion/MainWindow.xaml" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/MainWindow.xaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Discussion/MainWindow.xaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/MainWindow.xaml.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Discussion/Theme.xaml" beforeDir="false" afterPath="$PROJECT_DIR$/Discussion/Theme.xaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Tools/PersonaTraitTest/MainWindow.xaml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/installer/Product.wxs" beforeDir="false" afterPath="$PROJECT_DIR$/installer/Product.wxs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -20,45 +20,45 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "thunder312"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;thunder312&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/thunder312/Discussion.git",
-    "accountId": "592e7eba-e2db-4022-82ea-68df3d0d9ec6"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/thunder312/Discussion.git&quot;,
+    &quot;accountId&quot;: &quot;592e7eba-e2db-4022-82ea-68df3d0d9ec6&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3,
-  "fromUser": false
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3,
+  &quot;fromUser&quot;: false
+}</component>
   <component name="ProjectId" id="3LmYW6IbCM58AYrWyPS3OdZi1yd" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/Dropbox/Entwicklung/Discussion",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Dropbox/Entwicklung/Discussion&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;
   }
-}]]></component>
+}</component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -73,7 +73,8 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1794060738716</updated>
-      <workItem from="1794060739747" duration="704000" />
+      <workItem from="1794060739747" duration="2059000" />
+      <workItem from="1794128354669" duration="37000" />
     </task>
     <servers />
   </component>

@@ -14,6 +14,7 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DunkleTitelleiste.Anwenden(this);
+        KopfIcon.Source = IconQuelle.GroessterFrame("pack://application:,,,/Assets/AppIcon.ico");
         _viewModel = new MainViewModel();
         DataContext = _viewModel;
         _viewModel.Verlauf.CollectionChanged += Verlauf_CollectionChanged;

@@ -24,7 +24,7 @@ public sealed class AboutFenster : Window
 
         var logo = new Image
         {
-            Source = new BitmapImage(new Uri("pack://application:,,,/Assets/AppIcon.ico")),
+            Source = IconQuelle.GroessterFrame("pack://application:,,,/Assets/AppIcon.ico"),
             Width = 56, Height = 56,
         };
         RenderOptions.SetBitmapScalingMode(logo, BitmapScalingMode.HighQuality);

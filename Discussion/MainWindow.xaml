@@ -126,7 +126,7 @@
         </Grid.RowDefinitions>
         <!-- Kopfzeile: App-Logo + Name links, Über-Dialog rechts (Eulenwerk-Layout) -->
         <DockPanel Grid.Row="0" Margin="4,0,4,8" LastChildFill="False">
-            <Image Source="Assets/AppIcon.ico" Width="24" Height="24" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <Image x:Name="KopfIcon" RenderOptions.BitmapScalingMode="HighQuality" Width="24" Height="24" DockPanel.Dock="Left" VerticalAlignment="Center" Margin="0,0,8,0"/>
             <TextBlock Text="KI-Diskussion" FontSize="16" FontWeight="SemiBold" DockPanel.Dock="Left" VerticalAlignment="Center"/>
             <Button Content="Über" DockPanel.Dock="Right" Padding="10,4" Click="Ueber_Click"
                     Background="Transparent" BorderBrush="{StaticResource BorderColorBrush}" Foreground="{StaticResource MutedTextBrush}" FontWeight="Normal"/>
